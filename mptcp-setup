@@ -1,0 +1,36 @@
+#!/bin/bash
+
+if [ -z $1 ]; then
+    GATEWAY_LIST_NUM=2
+else
+    GATEWAY_LIST_NUM=$1
+fi
+
+if [ -z $2 ]; then
+    GATEWAYS_PER_LIST=1
+else
+    GATEWAYS_PER_LIST=$2
+fi
+
+NDIFFPORTS=$GATEWAY_LIST_NUM
+let NDIFFPORTS++
+
+sysctl -w net.ipv4.conf.all.accept_source_route=1
+sysctl -w net.ipv4.ip_forward=1
+sysctl -w net.mptcp.mptcp_debug=1
+sysctl -w net.mptcp.mptcp_enabled=1
+sysctl -w net.mptcp.mptcp_ndiffports=$NDIFFPORTS
+
+for ((i=1; i<=$GATEWAY_LIST_NUM; i++)); do
+    for (( j=1; j<=$GATEWAYS_PER_LIST; j++)); do
+	    GATEWAY_LIST=$GATEWAY_LIST"192.168.$i.$j"
+	    if [ $j -ne $GATEWAYS_PER_LIST ]; then
+		GATEWAY_LIST=$GATEWAY_LIST","
+	    fi
+    done
+    
+    if [ $i -ne $GATEWAY_LIST_NUM ]; then
+	GATEWAY_LIST=$GATEWAY_LIST"-"
+    fi
+done
+sysctl -w net.mptcp.mptcp_gateways="$GATEWAY_LIST"
