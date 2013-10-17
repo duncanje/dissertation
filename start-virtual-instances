@@ -7,10 +7,8 @@ if [ "$1" == "-u" ]; then
     COMMAND="-net nic -net user"
 fi
 
-function start {
-    
+function start {    
     qemu-system-x86_64 -hda "$1" -kernel "$ROOT/bzImage" -append "root=/dev/sda1" -net nic,macaddr=52:54:00:12:34:$((RANDOM%50)) -net tap,ifname="$2",vlan=0,script=no,downscript=no $COMMAND &
-
 }
 
 start "$ROOT/images/debian-wheezy-1.img" "tap0"
