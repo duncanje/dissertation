@@ -1,15 +1,28 @@
 #!/bin/bash
 
-ROOT=""
+ROOT="../"
+KERNEL="$ROOT/bzImage"
+BRIDGES="br0 br1 br06 br16"
 
 COMMAND=""
-if [ "$1" == "-u" ]; then
-    COMMAND="-net nic -net user"
-fi
+while [ ! -z "$1" ]; do
+    if [ "$1" == "-u" ]; then
+	COMMAND="-net nic -net user"
+    else
+	KERNEL="$1"
+    fi
+    shift
+done
 
 function start {    
-    qemu-system-x86_64 -hda "$1" -kernel "$ROOT/bzImage" -append "root=/dev/sda1" -net nic,macaddr=52:54:00:12:34:$((RANDOM%50)) -net tap,ifname="$2",vlan=0,script=no,downscript=no $COMMAND &
+    qemu-system-x86_64 -hda "$1" -kernel "$KERNEL" -append "root=/dev/sda1" -net nic,macaddr=52:54:00:12:34:$((RANDOM%50)) -net tap,ifname="$2",vlan=0,script=no,downscript=no -net nic,macaddr=52:54:00:12:34:$((RANDOM%50)) -net tap,ifname="$3",vlan=0,script=no,downscript=no $COMMAND &
 }
 
-start "$ROOT/images/debian-wheezy-1.img" "tap0"
-start "$ROOT/images/debian-wheezy-2.img" "tap1"
+for bridge in $(echo $BRIDGES); do
+    if [ -z "$(ifconfig | grep $bridge)" ]; then
+	sudo ifup $bridge
+    fi
+done
+
+start "$ROOT/images/debian-wheezy-1.img" "tap0" "tap06"
+start "$ROOT/images/debian-wheezy-2.img" "tap1" "tap16"
