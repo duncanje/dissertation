@@ -1,13 +1,17 @@
 #!/bin/bash
 
-ROOT="../"
+ROOT=".."
 KERNEL="$ROOT/bzImage"
 BRIDGES="br0 br1 br06 br16"
 
 COMMAND=""
+DEBUG=0
 while [ ! -z "$1" ]; do
     if [ "$1" == "-u" ]; then
-	COMMAND="-net nic -net user"
+	COMMAND="$COMMAND -net nic -net user"
+    elif [ "$1" == "-d" ]; then
+	echo "GDB server enabled on 2nd instance"
+	DEBUG=1
     else
 	KERNEL="$1"
     fi
@@ -15,7 +19,7 @@ while [ ! -z "$1" ]; do
 done
 
 function start {    
-    qemu-system-x86_64 -hda "$1" -kernel "$KERNEL" -append "root=/dev/sda1" -net nic,macaddr=52:54:00:12:34:$((RANDOM%50)) -net tap,ifname="$2",vlan=0,script=no,downscript=no -net nic,macaddr=52:54:00:12:34:$((RANDOM%50)) -net tap,ifname="$3",vlan=0,script=no,downscript=no $COMMAND &
+    qemu-system-x86_64 -hda "$1" -kernel "$KERNEL" -append "root=/dev/sda1" -net nic,macaddr=52:54:00:12:$((RANDOM%50)):$((RANDOM%50)) -net tap,ifname="$2",vlan=0,script=no,downscript=no -net nic,macaddr=52:54:00:12:$((RANDOM%50)):$((RANDOM%50)) -net tap,ifname="$3",vlan=0,script=no,downscript=no $COMMAND &
 }
 
 for bridge in $(echo $BRIDGES); do
@@ -25,4 +29,8 @@ for bridge in $(echo $BRIDGES); do
 done
 
 start "$ROOT/images/debian-wheezy-1.img" "tap0" "tap06"
+
+if [ $DEBUG -eq 1 ]; then
+    COMMAND="$COMMAND -s -S"
+fi
 start "$ROOT/images/debian-wheezy-2.img" "tap1" "tap16"

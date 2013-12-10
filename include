@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# Set all variables values under a parent path to the same value
+# $1 - parent path
+# $2 - variable
+# $3 - value to set
+function setSysVars {
+    parent=$(echo $1 | sed -e 's/\./\//g')
+    parent="/proc/sys/$parent"
+
+    for i in $(ls $parent); do
+	echo -n "$1.$i.$2="
+	echo $3 | tee $parent/$i/$2
+    done
+}
