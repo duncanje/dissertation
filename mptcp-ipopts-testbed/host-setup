@@ -1,0 +1,29 @@
+#!/bin/bash
+source ../include/sys-vars
+
+if [ $(id -u) -ne 0 ]; then
+    echo "Run as root"
+    exit 1
+fi
+
+if [ "$1" == "disable" ]; then
+    sysValue=0
+    iptCmd="-D"
+else
+    sysValue=1
+    iptCmd="-A"
+fi
+
+setSysVars net.ipv4.conf accept_source_route $sysValue
+sysctl -w net.ipv4.ip_forward=$sysValue
+iptables -t nat "$iptCmd" POSTROUTING -o br0 -j MASQUERADE
+iptables -t nat "$iptCmd" POSTROUTING -o br1 -j MASQUERADE
+
+setSysVars net.ipv6.conf accept_source_route $sysValue
+setSysVars net.ipv6.conf forwarding $sysValue
+iptables -t nat "$iptCmd" POSTROUTING -o br06 -j MASQUERADE
+iptables -t nat "$iptCmd" POSTROUTING -o br16 -j MASQUERADE
+
+iptables -t nat "$iptCmd" POSTROUTING -s 192.168.0.0/16 -o wlan0 -j MASQUERADE
+
+iptables -t nat -L
