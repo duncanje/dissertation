@@ -1,5 +1,5 @@
 #!/bin/bash
-source include
+source ../include/sys-vars
 
 if [ $(id -u) -ne 0 ]; then
     echo "Run as root"

@@ -1,16 +1,16 @@
 #!/bin/bash
 
-ROOT=".."
+ROOT="../.."
 KERNEL="$ROOT/bzImage"
 BRIDGES="br0 br1 br06 br16"
 
 DEBUG=0
 while [ ! -z "$1" ]; do
     if [ "$1" == "-d" ]; then
-	echo "GDB server enabled on 2nd instance"
-	DEBUG=1
+		echo "GDB server enabled on 2nd instance"
+		DEBUG=1
     else
-	KERNEL="$1"
+		KERNEL="$1"
     fi
     shift
 done
@@ -21,7 +21,7 @@ function start {
 
 for bridge in $(echo $BRIDGES); do
     if [ -z "$(ifconfig | grep $bridge)" ]; then
-	sudo ifup $bridge
+		sudo ifup $bridge
     fi
 done
 

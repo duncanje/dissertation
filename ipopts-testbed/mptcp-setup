@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source include
+source ../include/sys-vars
 
 if [ -z $1 ]; then
     GATEWAY_LIST_NUM=2

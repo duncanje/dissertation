@@ -1,0 +1,20 @@
+#!/bin/bash
+
+# Setup Wireshark for remote capture
+# Requires SSH and dumpcap on the remote machine
+#
+# $1 - FIFO name (displayed in the Wireshark title)
+# $2 - SSH (capture machine) user
+# $3 - SSH (capture machine) host
+# $4 - Capture interface
+# $5 - Local IP
+#
+# Based on http://wiki.wireshark.org/CaptureSetup/Pipes
+
+function remoteCapture {
+	mkfifo /tmp/$1
+	wireshark -k -i /tmp/$1 &
+	ssh $2@$3 "dumpcap -P -i $4 -w - -f 'not host $5'" > /tmp/$1
+	
+	rm /tmp/$1
+}

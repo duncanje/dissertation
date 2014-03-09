@@ -1,0 +1,5 @@
+#!/bin/bash
+source ../include/remote-wireshark
+
+remoteCapture router-eth1 root 10.0.1.1 eth1 10.0.1.10 &
+remoteCapture router-eth2 root 10.0.1.1 eth2 10.0.1.10
