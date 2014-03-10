@@ -1,0 +1,18 @@
+#!/bin/bash
+
+ROOT="/home/duncan/backups"
+
+if [ ! -d $ROOT ]; then
+    echo "Cannot find $ROOT"
+    exit 1
+fi
+
+cd $ROOT
+for i in $(seq 11 20); do
+	if [ ! -d $i ]; then
+		mkdir -p $i
+	fi
+	cd $i
+	scp -r root@192.168.3.$i:/etc root@192.168.3.$i:/root .
+	cd ..
+done

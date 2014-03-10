@@ -1,0 +1,11 @@
+#!/bin/sh
+
+NODE="11"
+CONTEXT="B"
+INTERFACES="wlan0 wlan1 wlan2"
+
+for i in $INTERFACES; do
+	echo $i
+	iwlist $i scan | grep -$CONTEXT 3 -e Binder\-[^$NODE] | grep -v Mode | grep -v Encryption
+	echo
+done

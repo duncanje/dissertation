@@ -1,0 +1,25 @@
+#!/bin/ash
+
+while [ ! -z "$1" ]; do
+	if [ "$1" == "sta" ]; then
+		sed -e 's/option ssid/#option ssid/g' -e 's/ap/sta/g' /etc/config/wireless > /tmp/wireless
+	elif [ "$1" == "ap" ]; then
+		sed -e 's/#option ssid/option ssid/g' -e 's/sta/ap/g' /etc/config/wireless > /tmp/wireless
+	elif [ "$1" == "off" ]; then
+		sed -e 's/#option disabled/option disabled/g' /etc/config/wireless > /tmp/wireless
+	elif [ "$1" == "on" ]; then
+		sed -e 's/option disabled/#option disabled/g' /etc/config/wireless > /tmp/wireless
+	else
+		echo "Arguments must be one of: sta ap on off"
+		exit 1
+	fi
+
+	mv /tmp/wireless /etc/config/wireless	
+	shift
+done
+
+echo "Restart networking..."
+echo
+/etc/init.d/network restart
+echo
+echo "Exit code $?"
