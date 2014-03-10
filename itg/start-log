@@ -1,0 +1,15 @@
+#!/bin/bash
+source include/testbed
+
+# Configure a log server on a node
+# $1: - Node path to reach the node to log on
+
+if [ -z "$1" ]; then
+	echo "Required arguments: <node> <path> <to> <log> <node>"
+	exit 1
+fi
+
+echo Please wait...
+echo
+
+runTestbedCommand 'ITGLog' testbedgw $@

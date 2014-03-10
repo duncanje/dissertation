@@ -1,0 +1,12 @@
+#!/bin/bash
+
+if [ -z "$1" -o -z "$2" -o -z "$3" ]; then
+	echo "Required arguments: <log_server> <log_suffix> <node> <path> <to> <node>"
+	exit 1
+fi
+
+LOG_SERVER="$1"
+shift
+
+LOG_SUFFIX="$2"
+shift

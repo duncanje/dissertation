@@ -1,0 +1,13 @@
+#!/bin/bash
+source include/testbed
+source include/itg_send-recv_setup
+
+# Configure a sender on a node
+# $1 - Log server to log on
+# $2 - Log file suffix
+# $3: - Node path to reach the node to send from
+
+echo Please wait...
+echo
+
+runTestbedCommand "ITGSend -Q -L $LOG_SERVER -l /tmp/ITGSend_$LOG_SUFFIX.log" testbedgw $@

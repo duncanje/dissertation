@@ -1,0 +1,16 @@
+#!/bin/bash
+source include/testbed
+
+# Retrieve log files from gateway log server
+# $1 - Local destination directory
+
+if [ -z "$1" ]; then
+    echo "Required arguments: <destination_dir>"
+    exit 1
+fi
+
+mkdir -p "$1"
+runTestbedCommand "scp gateway:/tmp/ITG*.log /home/duncan/tmp/" testbedgw
+runTestbedCommand "rm -v /tmp/ITG*.log" testbedgw gateway
+scp testbedgw:/home/duncan/tmp/ITG*.log "$1"
+runTestbedCommand "rm -v /home/duncan/tmp/ITG*.log" testbedgw

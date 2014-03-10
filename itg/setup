@@ -1,0 +1,13 @@
+#!/bin/bash
+
+./launch "./start-log gateway" gateway-log
+
+sleep 2
+
+./launch "./start-receiver 192.168.3.127 client client" client-receiver
+./launch "./start-receiver 192.168.30.1 server gateway server" server-receiver
+
+./launch "./start-sender 192.168.3.127 client client" client-sender
+./launch "./start-sender 192.168.30.1 server gateway server" server-sender
+
+#./launch "ssh -t testbedgw 'ssh -t gateway'" gateway-control

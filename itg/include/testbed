@@ -1,0 +1,16 @@
+#!/bin/bash
+
+function runTestbedCommand {
+	TESTBED_COMMAND=""
+	COMMAND="$1"
+	shift
+
+	while [ ! -z "$1" ]; do
+	      TESTBED_COMMAND=$TESTBED_COMMAND"ssh -t $1 "
+	      shift
+	done
+	
+	TESTBED_COMMAND=$TESTBED_COMMAND" "$COMMAND
+
+	eval $TESTBED_COMMAND
+}
