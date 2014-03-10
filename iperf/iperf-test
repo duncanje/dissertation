@@ -1,0 +1,50 @@
+#!/bin/bash
+
+TEST_NUM=3
+REPORT_INTERVAL=1
+TEST_LENGTH=60
+
+if [ -z "$1" -o -z "$2" ]; then
+	echo "Arguments: <iperf_server> <out_dir>"
+	exit 1
+fi
+
+IPERF_SERVER=$1
+OUT=$2
+
+mkdir -p "$OUT"
+
+runTest() {
+	FLAGS="-i $REPORT_INTERVAL -t $TEST_LENGTH"
+	proto=$1
+	if [ "$proto" == "UDP" ]; then
+		FLAGS="$FLAGS -u -c"
+	elif [ "$proto" == "TCP" ]; then
+		FLAGS="$FLAGS -c"
+	else
+		echo "runTest() argument required!"
+		return
+	fi
+	date=$(date +%Y-%m-%d_%H-%M-%S)
+
+	echo -n "Running $proto test $i..."
+	iperf $FLAGS $IPERF_SERVER > $OUT"/"$date"_"$proto
+	echo " done"
+}
+
+wait() {
+	mins=$1
+	while [ $mins -gt 0 ]; do
+		echo "$mins minutes until next test set"
+		sleep 60
+		mins=$((mins-1))
+	done
+}
+
+i=1
+while [ $i -le $TEST_NUM ]; do
+	runTest TCP
+	runTest UDP
+	wait 5
+	i=$((i+1))
+done
