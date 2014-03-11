@@ -26,7 +26,6 @@ runTest() {
 		echo "runTest() argument required!"
 		return
 	fi
-	date=$(date +%Y-%m-%d_%H-%M-%S)
 
 	echo -n "Running $proto test $i..."
 	iperf $FLAGS $IPERF_SERVER > $OUT"/"$2"_"$proto
