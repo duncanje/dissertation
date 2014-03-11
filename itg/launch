@@ -15,4 +15,4 @@ if [ -z "$2" ]; then
     title="launch"
 fi
 
-xterm -title $title -hold -e "$1;echo;echo Close window"  &
+xterm -title $title -e "$1;echo;echo Close window;read"  &
