@@ -1,0 +1,42 @@
+#!/bin/bash
+
+# Based on https://github.com/VRT-onderzoek-en-innovatie/tcp-intercept/blob/master/README.md#iptables-setup
+
+IP_ROUTE_TABLE_NUMBER=10 # free routing table number to use
+FWMARK="0x01/0x01" # Distinguishing FWmark bit to use
+LISTEN_PORT=5000 # Port where tcp-intercept is listening on
+
+IP_CMD="add"
+IPT_CHAIN_CMD="-N"
+IPT_RULE_CMD="-A"
+if [ "$1" == "disable" ]; then
+	IP_CMD="del"
+	IPT_CHAIN_CMD="-X"
+	IPT_RULE_CMD="-D"
+fi
+
+function chainSetup {
+	iptables -t mangle $IPT_CHAIN_CMD tproxy
+}
+
+# First add a custom route table that delivers everything locally
+ip rule $IP_CMD fwmark $FWMARK table $IP_ROUTE_TABLE_NUMBER
+ip route $IP_CMD local 0.0.0.0/0 dev lo table $IP_ROUTE_TABLE_NUMBER
+
+if [ "$1" != "disable" ]; then
+	chainSetup
+fi
+
+# If this packet matches an existing, open local socket, deliver it locally
+iptables -t mangle $IPT_RULE_CMD tproxy -p tcp -m socket -j MARK --set-mark $FWMARK
+iptables -t mangle $IPT_RULE_CMD tproxy -p tcp -m socket -j RETURN
+# If it is a packet with a local destination, don't touch it
+iptables -t mangle $IPT_RULE_CMD tproxy -p tcp -m addrtype --dst-type LOCAL -j RETURN
+# Intercept all other TCP-connections
+iptables -t mangle $IPT_RULE_CMD tproxy -p tcp -j TPROXY --on-port $LISTEN_PORT --tproxy-mark $FWMARK
+
+iptables -t mangle $IPT_RULE_CMD PREROUTING -j tproxy
+
+if [ "$1" == "disable" ]; then
+	chainSetup
+fi
