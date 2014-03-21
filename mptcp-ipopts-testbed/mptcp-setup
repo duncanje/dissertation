@@ -17,6 +17,10 @@ fi
 NDIFFPORTS=$GATEWAY_LIST_NUM
 let NDIFFPORTS++
 
+rmmod mptcp_ndiffports_lsrr
+insmod mptcp_ndiffports_lsrr.ko
+sysctl -w net.mptcp.mptcp_path_manager=ndiffports_lsrr
+
 setSysVars net.ipv4.conf accept_source_route 1
 sysctl -w net.ipv4.ip_forward=1
 
@@ -25,7 +29,7 @@ setSysVars net.ipv6.conf forwarding 1
 
 sysctl -w net.mptcp.mptcp_debug=1
 sysctl -w net.mptcp.mptcp_enabled=1
-sysctl -w net.mptcp.mptcp_ndiffports=$NDIFFPORTS
+sysctl -w net.mptcp.mptcp_ndiffports_lsrr_ports=$NDIFFPORTS
 
 for ((i=1; i<=$GATEWAY_LIST_NUM; i++)); do
     for (( j=1; j<=$GATEWAYS_PER_LIST; j++)); do
@@ -39,4 +43,4 @@ for ((i=1; i<=$GATEWAY_LIST_NUM; i++)); do
 	GATEWAY_LIST=$GATEWAY_LIST"-"
     fi
 done
-sysctl -w net.mptcp.mptcp_gateways="$GATEWAY_LIST"
+sysctl -w net.mptcp.mptcp_ndiffports_lsrr_gateways="$GATEWAY_LIST"
