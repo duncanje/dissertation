@@ -1,0 +1,7 @@
+#!/bin/bash
+
+cd ~/xt_IPOPTSTRIP/xt_IPOPTSTRIP
+iptables --flush
+rmmod xt_IPOPTSTRIP
+insmod xt_IPOPTSTRIP.ko
+iptables -A FORWARD -j IPOPTSTRIP
