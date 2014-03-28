@@ -1,7 +1,11 @@
 #!/bin/bash
 
+function iptables_rules {
+	iptables $1 FORWARD -j IPOPTSTRIP
+}
+
 cd ~/xt_IPOPTSTRIP/xt_IPOPTSTRIP
-iptables --flush
+iptables_rules -D
 rmmod xt_IPOPTSTRIP
 insmod xt_IPOPTSTRIP.ko
-iptables -A FORWARD -j IPOPTSTRIP
+iptables_rules -A
