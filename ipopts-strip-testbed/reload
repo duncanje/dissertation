@@ -1,7 +1,9 @@
 #!/bin/bash
 
+MOD_OPTS=$@
+
 function iptables_rules {
-	iptables $1 FORWARD -j IPOPTSTRIP
+	iptables $1 FORWARD -j IPOPTSTRIP $MOD_OPTS
 }
 
 cd ~/xt_IPOPTSTRIP/xt_IPOPTSTRIP
