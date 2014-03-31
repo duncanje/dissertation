@@ -7,5 +7,6 @@ function iptables_rules {
 cd ~/xt_IPOPTSTRIP/xt_IPOPTSTRIP
 iptables_rules -D
 rmmod xt_IPOPTSTRIP
+modprobe x_tables
 insmod xt_IPOPTSTRIP.ko
 iptables_rules -A
