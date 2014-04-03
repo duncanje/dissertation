@@ -17,6 +17,7 @@ done
 
 function start {    
     qemu-system-x86_64 -hda "$1" -kernel "$KERNEL" -append "root=/dev/sda1" -net nic,macaddr=52:54:00:12:$((RANDOM%50)):$((RANDOM%50)) -net tap,ifname="$2",vlan=0,script=no,downscript=no -net nic,macaddr=52:54:00:12:$((RANDOM%50)):$((RANDOM%50)) -net tap,ifname="$3",vlan=0,script=no,downscript=no &
+    echo "$1 QEMU PID: $!"
 }
 
 for bridge in $(echo $BRIDGES); do
