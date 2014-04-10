@@ -1,14 +1,12 @@
 #!/bin/bash
 
-MOD_OPTS=$@
-
 function iptables_rules {
-	iptables $1 FORWARD -j IPOPTSTRIP $MOD_OPTS
+	iptables $1 FORWARD -j IPOPTSTRIP $2
 }
 
 cd ~/xt_IPOPTSTRIP/xt_IPOPTSTRIP
-iptables_rules -D
+iptables --flush
 rmmod xt_IPOPTSTRIP
 modprobe x_tables
 insmod xt_IPOPTSTRIP.ko
-iptables_rules -A
+iptables_rules -A $@
