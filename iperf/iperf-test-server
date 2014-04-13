@@ -1,4 +1,11 @@
 #!/bin/sh
 
-iperf -s &
-iperf -u -s
+REPORT_INTERVAL=1
+
+if [ -z "$1" ]; then
+	echo "Arguments: <out_dir>"
+	exit 1
+fi
+
+iperf -i $REPORT_INTERVAL -s > "$1/TCP" &
+iperf -i $REPORT_INTERVAL -u -s > "$1/UDP"
