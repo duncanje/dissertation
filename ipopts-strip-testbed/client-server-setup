@@ -1,0 +1,29 @@
+#!/bin/bash
+
+source ../include/sys-vars
+
+if [ -z $1 ]; then
+    GATEWAY_LIST_NUM=2
+else
+    GATEWAY_LIST_NUM=$1
+fi
+
+if [ -z $2 ]; then
+    GATEWAYS_PER_LIST=1
+else
+    GATEWAYS_PER_LIST=$2
+fi
+
+NDIFFPORTS=$GATEWAY_LIST_NUM
+let NDIFFPORTS++
+
+setSysVars net.ipv4.conf accept_source_route 1
+sysctl -w net.ipv4.ip_forward=1
+
+setSysVars net.ipv6.conf accept_source_route 1
+setSysVars net.ipv6.conf forwarding 1
+
+sysctl -w net.mptcp.mptcp_debug=1
+sysctl -w net.mptcp.mptcp_enabled=1
+sysctl -w net.mptcp.mptcp_ndiffports=$NDIFFPORTS
+
